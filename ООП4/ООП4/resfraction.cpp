@@ -1,0 +1,104 @@
+#include "pch.h"
+#include "resfraction.h"
+
+void resfraction::makeRes()
+{
+	if (res == nullptr) {
+		res = new float;
+	}
+	*res = float(getNumerator()) / getDenominator();
+}
+
+resfraction::resfraction()
+{
+
+}
+
+resfraction::resfraction(int Numerator, int Denominator) : fraction(Numerator, Denominator)
+{
+	res = new float(float(Numerator) / Denominator);
+}
+
+resfraction::resfraction(const resfraction & F) : fraction(F)
+{
+	delete res;
+	res = new float;
+	*res = *F.res;
+}
+
+resfraction::~resfraction()
+{
+	delete res;
+}
+
+float resfraction::getRes()
+{
+	return *res;
+}
+
+resfraction & resfraction::operator=(const resfraction & F)
+{
+	delete res;
+	fraction::operator=(F);
+	res = new float;
+	*res = *F.res;
+	return *this;
+}
+
+resfraction resfraction::operator+(const resfraction & F)
+{
+	fraction F1 = fraction::operator+(F);
+	return resfraction(F1.getNumerator(), F1.getDenominator());
+}
+
+resfraction resfraction::operator-(const resfraction & F)
+{
+	fraction F1 = fraction::operator-(F);
+	return resfraction(F1.getNumerator(), F1.getDenominator());
+}
+
+resfraction resfraction::operator*(const resfraction & F)
+{
+	fraction F1 = fraction::operator*(F);
+	return resfraction(F1.getNumerator(), F1.getDenominator());
+}
+
+resfraction resfraction::operator/(const resfraction & F)
+{
+	fraction F1 = fraction::operator/(F);
+	return resfraction(F1.getNumerator(), F1.getDenominator());
+}
+
+std::ostream & operator<<(std::ostream & out, resfraction &F)
+{
+	out << F.getStr() << '=' << F.getRes();
+	return out;
+}
+
+std::istream & operator>>(std::istream & in, resfraction & F)
+{
+	char c[22];
+	in >> c;
+
+	int Num, Den;
+
+	char Buf[11];
+
+	int i = 0;
+	for (; c[i] != '/' && c[i] != '\0'; Buf[i] = c[i++]);
+	Buf[i++] = '\0';
+
+	Num = atoi(Buf);
+
+	int j = 0;
+	for (; c[i] != '\0'; Buf[j++] = c[i++]);
+	Buf[j] = '\0';
+	Den = atoi(Buf);
+
+	F.setNumerator(Num);
+	F.setDenominator(Den);
+
+	F.makeRes();
+
+	return in;
+}
